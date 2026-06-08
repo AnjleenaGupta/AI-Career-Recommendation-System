@@ -1,9 +1,10 @@
 import os
 os.makedirs("static", exist_ok=True)
+import streamlit as st
 import pdfplumber
 import pandas as pd
 
-from flask import Flask, render_template, request, send_file, url_for
+from flask import  render_template, request, send_file, url_for
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -279,7 +280,6 @@ def download_report():
 # -----------------------------
 # RUN APP
 # -----------------------------
-if __name__ == "__main__":
-    app.run(debug=True)
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)    
