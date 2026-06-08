@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Career Recommendation System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>AI Career Recommendation System</h1>
+
+    <!-- FORM -->
+    <form method="POST" enctype="multipart/form-data">
+
+        <input type="text"
+               name="skills"
+               placeholder="Enter skills (python sql machine learning)">
+
+        <br><br>
+
+        <input type="file" name="resume" accept=".pdf">
+
+        <br><br>
+
+        <button type="submit">Recommend Career</button>
+    </form>
+
+    <!-- RESULTS -->
+    {% if recommendations is not none %}
+
+    <div class="result-box">
+
+        <h2>Top Career Matches</h2>
+
+        <div class="career-grid">
+
+            {% for _, row in recommendations.iterrows() %}
+            <div class="career-card">
+
+                <h3>{{ row['career'] }}</h3>
+
+                <div class="progress-container">
+                    <div class="progress-bar"
+                         style="width: {{ (row['score'] * 100)|round(2) }}%;">
+                    </div>
+                </div>
+
+                <p>{{ (row['score'] * 100)|round(2) }}% Match</p>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <!-- ATS SCORE -->
+    {% if ats_score is not none %}
+    <div class="insight-box">
+        <h2>ATS Score</h2>
+        <h1>{{ ats_score }} / 100</h1>
+    </div>
+    {% endif %}
+
+    <!-- EXTRACTED SKILLS -->
+    {% if extracted_skills %}
+    <div class="section-card">
+
+        <h3>Skills Extracted</h3>
+
+        <div>
+            {% for skill in extracted_skills %}
+                <span class="skill-tag">{{ skill }}</span>
+            {% endfor %}
+        </div>
+
+    </div>
+    {% endif %}
+
+    <!-- BEST CAREER -->
+    {% if best_career %}
+    <div class="section-card">
+
+        <h2>Best Career Match</h2>
+
+        <p><b>{{ best_career }}</b></p>
+
+        {% if career_details %}
+        <p>{{ career_details.description }}</p>
+        <p>{{ career_details.salary }}</p>
+        {% endif %}
+
+    </div>
+    {% endif %}
+
+    <!-- MISSING SKILLS -->
+    {% if missing_skills %}
+    <div class="section-card">
+
+        <h3>Missing Skills</h3>
+
+        <ul>
+            {% for skill in missing_skills %}
+            <li>{{ skill }}</li>
+            {% endfor %}
+        </ul>
+
+    </div>
+    {% endif %}
+
+    <!-- ROADMAP -->
+    {% if career_roadmap %}
+    <div class="section-card">
+
+        <h3>Career Roadmap</h3>
+
+        <ul>
+            {% for step in career_roadmap %}
+            <li>{{ step }}</li>
+            {% endfor %}
+        </ul>
+
+    </div>
+    {% endif %}
+
+    <!-- DOWNLOAD BUTTON -->
+    <br>
+
+    <a href="/download-report">
+        <button type="button">📥 Download Report</button>
+    </a>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
