@@ -1,3 +1,10 @@
 flask
 pandas
 scikit-learn
+streamlit
+pandas
+numpy
+scikit-learn
+pdfplumber
+reportlab
+matplotlib
