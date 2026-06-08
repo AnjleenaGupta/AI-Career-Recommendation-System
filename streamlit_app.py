@@ -7,11 +7,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # -----------------------------
-# CONFIG
+# PAGE CONFIG
 # -----------------------------
 st.set_page_config(page_title="AI Career Recommender", layout="centered")
 
 st.title("🚀 AI Career Recommendation System")
+st.markdown("Upload your resume or enter skills to get best career suggestions.")
 
 # -----------------------------
 # SKILL DATABASE
@@ -25,7 +26,7 @@ SKILLS_DB = [
 ]
 
 # -----------------------------
-# CAREER DATA (sample fallback)
+# CAREER INFO
 # -----------------------------
 CAREER_INFO = {
     "Data Scientist": "₹8–20 LPA",
@@ -56,9 +57,10 @@ def extract_skills(text):
     return [skill for skill in SKILLS_DB if skill in text]
 
 # -----------------------------
-# SIMPLE ML RECOMMENDATION
+# RECOMMENDATION ENGINE
 # -----------------------------
 def recommend(user_input, df):
+
     df = df.copy()
 
     data = df["skills"].tolist()
@@ -79,24 +81,32 @@ def recommend(user_input, df):
 df = pd.read_csv("careers.csv")
 
 # -----------------------------
-# UI INPUT
+# INPUT SECTION
 # -----------------------------
-user_skills = st.text_input("Enter your skills (python, sql, ml, etc.)")
+user_skills = st.text_input("Enter your skills (python, sql, machine learning etc.)")
 
 uploaded_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"])
 
 # -----------------------------
-# PROCESS
+# BUTTON ACTION
 # -----------------------------
-if st.button("Recommend Career"):
+if st.button("🚀 Recommend Career"):
 
+    # Extract resume text
     resume_text = extract_text(uploaded_file)
+
+    # Extract skills from resume
     resume_skills = extract_skills(resume_text)
 
+    # Combine skills
     combined_skills = user_skills + " " + " ".join(resume_skills)
 
+    # Get recommendations
     result = recommend(combined_skills, df)
 
+    # -------------------------
+    # RESULTS
+    # -------------------------
     st.subheader("🏆 Top Career Matches")
 
     for _, row in result.head(5).iterrows():
@@ -105,13 +115,16 @@ if st.button("Recommend Career"):
         st.progress(float(row['score']))
         st.write(f"Match: {round(row['score']*100, 2)}%")
 
+    # Best career
     best = result.iloc[0]["career"]
 
-    st.subheader("🎯 Best Career")
+    st.subheader("🎯 Best Career Match")
     st.success(best)
 
+    # Salary
     st.subheader("💰 Salary Range")
-    st.info(CAREER_INFO.get(best, "Not available"))
+    st.info(CAREER_INFO.get(best, "Not Available"))
 
-    st.subheader("🧠 Extracted Skills")
+    # Skills
+    st.subheader("🧠 Extracted Skills from Resume")
     st.write(resume_skills)
